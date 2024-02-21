@@ -36,7 +36,22 @@ hr {
 .bal-point {
     padding-left: 25px;
 }
+.bal-point:hover {
+    cursor:pointer;
+}
 
 p {
     
+}
+
+#lotto-felirat {
+    background-color: rgb(54, 160, 54);
+    font-size:120px;
+    border-radius: 50%;
+    /* padding: 30px; */
+    padding: 0px 0px;
+    display:inline;
+    position: absolute;
+    left:210px;
+    top:90px;
 }

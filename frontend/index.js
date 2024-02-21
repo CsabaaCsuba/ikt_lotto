@@ -5,12 +5,12 @@ const rightSide = document.getElementById("jobb");
 var currentPage = defaultPage;
 
 const pages = {
-    "sorsolasok":{title:"<h1>Korábbi sorsolások</h1>", body:"<h3>Az előző heti nyerőszámok</h3><div id='elozohetiSzamok'></div><h3>A múlt heti nyerőszámok</h3><div id='multhetiSzamok'></div>"},
-    "leggyakoribb":{title:"<h1>Leggyakoribb számok</h1>", body:"<h3>#1</h3><h3>#2</h3><h3>#3</h3>"},
-    "leghasonlobb":{title:"<h1>Leghasonlóbb számok</h1>"},
-    "leghoszabb":{title:"<h1>Leghoszabb számok</h1>"},
-    "grafikonok":{title:"<h1>Grafikonok</h1>"},
-    "erdekessegek":{title:"<h1>Érdekességek</h1>"}
+    "sorsolasok":{title:"<h1>Korábbi sorsolások</h1>", body:"<h2>Az előző heti nyerőszámok</h2><div id='elozohetiSzamok'></div><h2>A múlt heti nyerőszámok</h2><div id='multhetiSzamok'></div>"},
+    "leggyakoribb":{title:"<h1>Leggyakoribb számok</h1>", body:"<h2>#1</h2><h2>#2</h2><h2>#3</h2>"},
+    "leghasonlobb":{title:"<h1>Leghasonlóbb számok</h1>", body:"<h2></h2><div></div><h2></h2><div></div>"},
+    "leghoszabb":{title:"<h1>A 3 leghoszabb sorozatot tartalmaző számsor</h1>", body: ""},
+    "grafikonok":{title:"<h1>Grafikonok</h1>", body:""},
+    "erdekessegek":{title:"<h1>Érdekességek</h1>", body:""}
 }
 
 let loadPage = (page) => {
