@@ -1,4 +1,5 @@
 import requests
+import copy
 
 class Huzas:
     def __init__(self, line: str):
@@ -17,6 +18,21 @@ class Huzas:
             self.kettalalat = line_split[9]
             self.kettes_nyeremeny = line_split[10]
             self.szamok = line_split[11:16]
+            self.int_szamok = sorted(list(int(x) for x in line_split[11:16]))
+            self.szamsorosszeg = 0
+            for n in self.int_szamok:
+                self.szamsorosszeg += n
+
+            self.rendezett_szamsorhossz = 1
+            ##bit faulty but works
+            for i in range(0, len(self.int_szamok)-1):
+                if self.int_szamok[i]+1 == self.int_szamok[i+1]:
+                    self.rendezett_szamsorhossz += 1
+                else:
+                    self.rendezett_szamsorhossz = 1
+
+            if (self.rendezett_szamsorhossz > 2):
+                print("nagyobb mint fasz")
         else:
             self.ev = ""
             self.het = ""
@@ -25,7 +41,7 @@ class Huzas:
         return f"év: {self.ev}, hét: {self.het}"
         
 
-eredmenyek = []
+eredmenyek: list[Huzas] = []
      
 def parse_official_link():
     otos_url = "https://bet.szerencsejatek.hu/cmsfiles/otos.csv"
@@ -33,20 +49,66 @@ def parse_official_link():
     current_file = requests.get(otos_url)
 
     rawdata: str = current_file.content.decode()
-    all_weeks = rawdata.split("\r\n")
+    all_weeks = rawdata.split("\r\n")[:-1] #last line is empty
     for week in all_weeks:
         eredmenyek.append(Huzas(week))
 
 def nyeroszamok_x_hete(hany_hete: int) -> list:
     return eredmenyek[hany_hete-1].szamok
 
-def leggyakoribb_szamok():
+def szamok_gyakorisag_szerint():
     szamok = {str(n):0 for n in range(1, 91)}
     for sorsolas in eredmenyek:
-        print()
+        for szam in sorsolas.szamok:
+            szamok[szam] += 1
+
+
+    gyakorisag_szerint = {k: v for k, v in sorted(szamok.items(), key=lambda item: item[1], reverse=True)}
+    return gyakorisag_szerint
+
+
+def leghasonlobb_huzasok():
+    top2_hasonlo = {'egyik':eredmenyek[0], 'masik':eredmenyek[1], "ugyanaz":0}
+
+
+    for huzas in eredmenyek:
+        for masikhuzas in eredmenyek:
+            egyezo_szamok = 0
+            if huzas.datum != masikhuzas.datum:
+                for szam in huzas.szamok:
+                    for masikszam in masikhuzas.szamok:
+                        if szam == masikszam:
+                            egyezo_szamok += 1
+                if egyezo_szamok > top2_hasonlo["ugyanaz"]:
+                    top2_hasonlo["egyik"] = copy.deepcopy(huzas)
+                    top2_hasonlo["masik"] = copy.deepcopy(masikhuzas)
+                    top2_hasonlo["ugyanaz"] = egyezo_szamok
+    return top2_hasonlo
+
+def a3_leghoszabb_sorozatot_tartalmazo_szamsor(): ###not working properly
+    return sorted(eredmenyek, key=lambda x: x.rendezett_szamsorhossz, reverse=True)[:3]
+
+def a3_legkisebb_osszegu_szamsor():
+    return sorted(eredmenyek, key=lambda x: x.szamsorosszeg)[:3]
+
 
 
 parse_official_link()
 
-print(list(str(eredmeny) for eredmeny in eredmenyek))
-print(nyeroszamok_x_hete(1))
+# print(list(str(eredmeny) for eredmeny in eredmenyek))
+print("Legutolsó nyerőszámok: ", nyeroszamok_x_hete(1))
+print(szamok_gyakorisag_szerint())
+
+leghasonlobb_h = leghasonlobb_huzasok()
+print("leghasonlóbb számsorok:", leghasonlobb_h["egyik"].szamok, 
+      f"húzás időpontja: {str(leghasonlobb_h['egyik'])}", 
+      leghasonlobb_h["masik"].szamok, 
+      f"húzás időpontja: {str(leghasonlobb_h['masik'])}")
+
+a3 = a3_leghoszabb_sorozatot_tartalmazo_szamsor()
+
+print("a 3 leghoszabb számsorozat:", a3[0].rendezett_szamsorhossz, a3[0].int_szamok, "\n", a3[1].rendezett_szamsorhossz, a3[1].int_szamok, "\n", a3[2].rendezett_szamsorhossz, a3[2].int_szamok)
+
+
+legkisebbek = a3_legkisebb_osszegu_szamsor()
+print(legkisebbek[0].szamsorosszeg, legkisebbek[1].szamsorosszeg, legkisebbek[2].szamsorosszeg)
