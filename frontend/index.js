@@ -13,24 +13,31 @@ const pages = {
     "erdekessegek":{title:"<h1>Érdekességek</h1>", body:""}
 }
 
-let loadPage = (page) => {
+let loadPage = async (page) => {
     let pageData = pages[page];
-    fetch(`http://127.0.0.1:8000/`)
-    .then(response=>response.text())
-    .catch(e=>console.log(e));
+    let response = await fetch(`http://127.0.0.1:8000/${page}`).then(result=>result.json())
+    // .then(response=>console.log(response.json()))
+    // .catch(e=>console.log(e));
     console.log(pageData)
+    console.log(response)
+    // let responseData = response.json()
     rightSide.innerHTML = ""+pageData.title
     rightSide.innerHTML += pageData.body
 }
 
-let onStart = () => {
-    loadPage(defaultPage)
+let onStart = async () => {
+    await loadPage(defaultPage)
     var btns = document.getElementsByClassName("bal-point")
     for (let i=0; i<btns.length;i++){
         btns[i].addEventListener("click", ()=>{
             loadPage(btns[i].id);
         })
     }
+
+    // var allPages = document.getElementsByClassName("bal-point")
+    // for (let i=0; i<allPages.length; i++){
+    //     allPages[i].addEventListener("click", ())
+    // }
     // btns.array.forEach(element => {
     //     element.addEventListener("click", ()=>{
     //         loadPage(element.id);
