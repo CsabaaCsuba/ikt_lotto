@@ -49,6 +49,7 @@ def parse_official_link():
     current_file = requests.get(otos_url)
 
     rawdata: str = current_file.content.decode()
+
     all_weeks = rawdata.split("\r\n")[:-1] #last line is empty
     for week in all_weeks:
         eredmenyek.append(Huzas(week))
@@ -59,15 +60,18 @@ def nyeroszamok_x_hete(hany_hete: int) -> list:
 def szamok_gyakorisag_szerint():
     szamok = {str(n):0 for n in range(1, 91)}
     for sorsolas in eredmenyek:
+        # print(sorsolas)
         for szam in sorsolas.szamok:
+            # print(szam)
             szamok[szam] += 1
 
 
     gyakorisag_szerint = {k: v for k, v in sorted(szamok.items(), key=lambda item: item[1], reverse=True)}
-    print(gyakorisag_szerint)
+
     return gyakorisag_szerint
 
-szamok_gyakorisag_szerint()
+# parse_official_link()
+# szamok_gyakorisag_szerint()
 
 def leghasonlobb_huzasok():
     top2_hasonlo = {'egyik':eredmenyek[0], 'masik':eredmenyek[1], "ugyanaz":0}
@@ -85,14 +89,29 @@ def leghasonlobb_huzasok():
                     top2_hasonlo["egyik"] = copy.deepcopy(huzas)
                     top2_hasonlo["masik"] = copy.deepcopy(masikhuzas)
                     top2_hasonlo["ugyanaz"] = egyezo_szamok
-    return top2_hasonlo
+    egyikszamsor = {'datum':top2_hasonlo['egyik'].datum, 'szamok':top2_hasonlo["egyik"].szamok}
+    masikszamsor = {'datum':top2_hasonlo["masik"].datum if top2_hasonlo["masik"].datum != "" else f"{top2_hasonlo['masik'].ev} {top2_hasonlo['masik'].het}. hét", 'szamok':top2_hasonlo["masik"].szamok}
+    return {'egyikszamsor':egyikszamsor, 'masikszamsor':masikszamsor}
+
+# parse_official_link()
+# print(leghasonlobb_huzasok())
 
 def a3_leghoszabb_sorozatot_tartalmazo_szamsor(): ###not working properly
-    return sorted(eredmenyek, key=lambda x: x.rendezett_szamsorhossz, reverse=True)[:3]
+    huzasok = sorted(eredmenyek, key=lambda x: x.rendezett_szamsorhossz, reverse=True)[:3]
+    returnolni = {f'szamsor{i}':{'szamsorhossz':huzasok[i].rendezett_szamsorhossz, 'szamok':huzasok[i].szamok} for i in range(0, 3)}
+    return returnolni
+
+# parse_official_link()
+# print(a3_leghoszabb_sorozatot_tartalmazo_szamsor())
 
 def a3_legkisebb_osszegu_szamsor():
-    return sorted(eredmenyek, key=lambda x: x.szamsorosszeg)[:3]
+    huzasok = sorted(eredmenyek, key=lambda x: x.szamsorosszeg)[:3]
+    returnolni = {f'szamsor{i}':{'szamsorosszeg':huzasok[i].szamsorosszeg, 'szamok':huzasok[i].szamok} for i in range(0, 3)}
+    return returnolni
 
+
+parse_official_link()
+print(a3_legkisebb_osszegu_szamsor())
 
 
 # parse_official_link()

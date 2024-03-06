@@ -15,28 +15,38 @@ def korabbi_sorsolasok(request):
     data = {'ny1':nyeroszamok_1_hete, 'ny2':nyeroszamok_2_hete}
     return Response(data)
 
+@api_view(('GET',))
 def leggyakoribb_szamok(request):
     gyakoriak = lotto_handling.szamok_gyakorisag_szerint()
-    data = {'gyakoriak':gyakoriak}
+    top3 = sorted(gyakoriak, key=gyakoriak.get, reverse=True)[:3]
+
+    data = {'gyakoriak':top3}
     return Response(data)
 
+@api_view(('GET',))
 def leghasonlobb_szamok(request):
     hasonloak = lotto_handling.leghasonlobb_huzasok()
     data = {'hasonloak':hasonloak}
     return Response(data)
 
+@api_view(('GET',))
 def leghoszabb_sorozatok(request):
     leghoszabbak = lotto_handling.a3_leghoszabb_sorozatot_tartalmazo_szamsor()
     data = {'leghoszabbak':leghoszabbak}
     return Response(data)
 
+@api_view(('GET',))
 def legkisebb_osszegu_szamsorok(request):
     legkisebbek = lotto_handling.a3_legkisebb_osszegu_szamsor()
     data = {'legkisebbek':legkisebbek}
     return Response(data)
 
+@api_view(('GET',))
 def grafikonok(request):
-    return Response({'4':4})
+    data = {'success':True}
+    return Response(data)
 
+@api_view(('GET',))
 def erdekessegek(request):
-    return Response({'5':5})
+    data = {'success':True}
+    return Response(data)
