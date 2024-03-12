@@ -44,13 +44,20 @@ class Huzas:
 eredmenyek: list[Huzas] = []
      
 def parse_official_link():
-    otos_url = "https://bet.szerencsejatek.hu/cmsfiles/otos.csv"
+    rawdata: str
+    try:
+        otos_url = "https://bet.szerencsejatek.hu/cmsfiles/otos.csv"
 
-    current_file = requests.get(otos_url)
+        current_file = requests.get(otos_url)
 
-    rawdata: str = current_file.content.decode()
+        rawdata = current_file.content.decode()
+    except Exception:
+        otos_url = "otos.csv"
 
-    all_weeks = rawdata.split("\r\n")[:-1] #last line is empty
+        with open(otos_url, "r") as file:
+            rawdata = file.read() 
+
+    all_weeks = rawdata.split("\n")[:-1] #last line is empty. "\r\n" has to be used on unix-based systems
     for week in all_weeks:
         eredmenyek.append(Huzas(week))
 
@@ -106,12 +113,13 @@ def a3_leghoszabb_sorozatot_tartalmazo_szamsor(): ###not working properly
 
 def a3_legkisebb_osszegu_szamsor():
     huzasok = sorted(eredmenyek, key=lambda x: x.szamsorosszeg)[:3]
+    # print(huzasok)
     returnolni = {f'szamsor{i}':{'szamsorosszeg':huzasok[i].szamsorosszeg, 'szamok':huzasok[i].szamok} for i in range(0, 3)}
     return returnolni
 
 
-parse_official_link()
-print(a3_legkisebb_osszegu_szamsor())
+# parse_official_link()
+# print(a3_legkisebb_osszegu_szamsor())
 
 
 # parse_official_link()

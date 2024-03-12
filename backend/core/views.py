@@ -18,15 +18,20 @@ def korabbi_sorsolasok(request):
 @api_view(('GET',))
 def leggyakoribb_szamok(request):
     gyakoriak = lotto_handling.szamok_gyakorisag_szerint()
+    print(gyakoriak)
     top3 = sorted(gyakoriak, key=gyakoriak.get, reverse=True)[:3]
-
-    data = {'gyakoriak':top3}
+    # print(top3)
+    kihuzasuk = []
+    for i in range(len(top3)):
+        kihuzasuk.append(gyakoriak[top3[i]])
+    data = {'gyakoriak':top3, 'kihuzasuk':kihuzasuk}
     return Response(data)
 
 @api_view(('GET',))
 def leghasonlobb_szamok(request):
     hasonloak = lotto_handling.leghasonlobb_huzasok()
     data = {'hasonloak':hasonloak}
+    print(data)
     return Response(data)
 
 @api_view(('GET',))
